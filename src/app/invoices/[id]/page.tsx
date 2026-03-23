@@ -2,7 +2,7 @@
 
 
 import { Suspense, useState, useCallback } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Loader2, ArrowLeft, Edit, X } from "lucide-react"
 import Link from "next/link"
 import { Navigation } from "@/components/navigation"
@@ -15,20 +15,18 @@ import { useInvoices } from "@/lib/hooks/useInvoices"
 
 export const dynamic = "force-dynamic"
 
-interface PageProps {
-  params: { id: string }
-}
-
-function InvoiceDetailContent({ params }: PageProps) {
+function InvoiceDetailContent() {
   const { user, loading: authLoading } = useAuth()
   const { invoices, loading: invoicesLoading, updateInvoice } = useInvoices(user?.uid ?? null)
   const router = useRouter()
   const searchParams = useSearchParams()
+  const params = useParams<{ id: string }>()
+  const invoiceId = params.id
   const [isEditing, setIsEditing] = useState(searchParams.get("edit") === "true")
   const [isSaving, setIsSaving] = useState(false)
   const [previewData, setPreviewData] = useState<Partial<InvoiceFormValues>>({})
 
-  const invoice = invoices.find((inv) => inv.id === params.id)
+  const invoice = invoices.find((inv) => inv.id === invoiceId)
 
   const handlePreviewChange = useCallback((data: Partial<InvoiceFormValues>) => {
     setPreviewData(data)
@@ -37,7 +35,7 @@ function InvoiceDetailContent({ params }: PageProps) {
   const handleSubmit = async (data: InvoiceFormValues) => {
     try {
       setIsSaving(true)
-      await updateInvoice(params.id, data)
+      await updateInvoice(invoiceId, data)
       setIsEditing(false)
     } catch (error) {
       console.error("Failed to update invoice:", error)
@@ -134,14 +132,14 @@ function InvoiceDetailContent({ params }: PageProps) {
   )
 }
 
-export default function InvoiceDetailPage({ params }: PageProps) {
+export default function InvoiceDetailPage() {
   return (
     <Suspense fallback={
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     }>
-      <InvoiceDetailContent params={params} />
+      <InvoiceDetailContent />
     </Suspense>
   )
 }
