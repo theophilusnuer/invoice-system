@@ -13,8 +13,8 @@ import { useAuth } from "@/lib/hooks/useAuth"
 
 export const dynamic = "force-dynamic"
 
-export default function LoginPage() {
-  const { user, loading, error, signInWithGoogle, signInWithEmail } = useAuth()
+export default function SignUpPage() {
+  const { user, loading, error, signInWithGoogle, signUpWithEmail } = useAuth()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -26,10 +26,10 @@ export default function LoginPage() {
     }
   }, [user, loading, router])
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    await signInWithEmail(email, password)
+    await signUpWithEmail(email, password)
     setIsSubmitting(false)
   }
 
@@ -50,9 +50,9 @@ export default function LoginPage() {
               <FileText className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Welcome to InvoiceApp</CardTitle>
+          <CardTitle className="text-2xl">Create an account</CardTitle>
           <CardDescription>
-            Sign in to create and manage your invoices from any device
+            Sign up to start managing your invoices in the cloud
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -78,7 +78,7 @@ export default function LoginPage() {
             </span>
           </div>
 
-          <form onSubmit={handleEmailLogin} className="space-y-3">
+          <form onSubmit={handleSignUp} className="space-y-3">
             <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -95,28 +95,24 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="At least 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
               />
-            </div>
-            <div className="flex justify-end">
-              <Link href="/auth/reset-password" className="text-xs text-muted-foreground hover:underline">
-                Forgot password?
-              </Link>
             </div>
             <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+              Create Account
             </Button>
           </form>
         </CardContent>
         <CardFooter className="justify-center">
           <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/signup" className="text-primary hover:underline font-medium">
-              Sign up
+            Already have an account?{" "}
+            <Link href="/auth/login" className="text-primary hover:underline font-medium">
+              Sign in
             </Link>
           </p>
         </CardFooter>
