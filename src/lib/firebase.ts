@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp as _getApp, type FirebaseApp } from "firebase/app"
-import { getAuth as _getAuth, GithubAuthProvider } from "firebase/auth"
+import { getAuth as _getAuth, GoogleAuthProvider } from "firebase/auth"
 import { getFirestore as _getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
@@ -20,7 +20,7 @@ function ensureApp(): FirebaseApp {
   return _app
 }
 
-export const githubProvider = new GithubAuthProvider()
+export const googleProvider = new GoogleAuthProvider()
 
 /** Returns the Firebase Auth instance, initializing Firebase on first call. */
 export function getFirebaseAuth() {

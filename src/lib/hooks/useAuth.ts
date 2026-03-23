@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react"
 import {
   signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   type User,
 } from "firebase/auth"
-import { getFirebaseAuth, githubProvider } from "@/lib/firebase"
+import { getFirebaseAuth, googleProvider } from "@/lib/firebase"
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -23,12 +26,41 @@ export function useAuth() {
     return () => unsubscribe()
   }, [])
 
-  const signInWithGitHub = async () => {
+  const signInWithGoogle = async () => {
     try {
       setError(null)
-      await signInWithPopup(getFirebaseAuth(), githubProvider)
+      await signInWithPopup(getFirebaseAuth(), googleProvider)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed")
+    }
+  }
+
+  const signInWithEmail = async (email: string, password: string) => {
+    try {
+      setError(null)
+      await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign in failed")
+    }
+  }
+
+  const signUpWithEmail = async (email: string, password: string) => {
+    try {
+      setError(null)
+      await createUserWithEmailAndPassword(getFirebaseAuth(), email, password)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign up failed")
+    }
+  }
+
+  const resetPassword = async (email: string): Promise<boolean> => {
+    try {
+      setError(null)
+      await sendPasswordResetEmail(getFirebaseAuth(), email)
+      return true
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Password reset failed")
+      return false
     }
   }
 
@@ -40,5 +72,5 @@ export function useAuth() {
     }
   }
 
-  return { user, loading, error, signInWithGitHub, signOut }
+  return { user, loading, error, signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword, signOut }
 }
