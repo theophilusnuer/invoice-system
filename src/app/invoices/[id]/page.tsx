@@ -1,6 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
 
 import { Suspense, useState, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -13,6 +12,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { useInvoices } from "@/lib/hooks/useInvoices"
+
+export const dynamic = "force-dynamic"
 
 interface PageProps {
   params: { id: string }

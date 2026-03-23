@@ -1,6 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
 
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
@@ -8,6 +7,8 @@ import { Navigation } from "@/components/navigation"
 import { InvoiceList } from "@/components/invoice-list"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { useInvoices } from "@/lib/hooks/useInvoices"
+
+export const dynamic = "force-dynamic"
 
 export default function InvoicesPage() {
   const { user, loading: authLoading } = useAuth()

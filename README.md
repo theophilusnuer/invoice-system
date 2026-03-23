@@ -25,7 +25,7 @@ A complete, production-ready web invoicing system built with Next.js, Firebase, 
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/theophilusnuer/invoice-system
+git clone https://github.com/YOUR_USERNAME/invoice-system
 cd invoice-system
 npm install
 ```

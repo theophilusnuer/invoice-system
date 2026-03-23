@@ -14,7 +14,7 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+import { getFirebaseDb } from "@/lib/firebase"
 import type { Invoice, InvoiceFormData } from "@/lib/types"
 
 function serializeInvoice(data: Record<string, unknown>, id: string): Invoice {
@@ -39,6 +39,7 @@ export function useInvoices(userId: string | null) {
       return
     }
 
+    const db = getFirebaseDb()
     const q = query(
       collection(db, "invoices"),
       where("userId", "==", userId),
@@ -69,7 +70,7 @@ export function useInvoices(userId: string | null) {
     const taxAmount = (subtotal * data.taxRate) / 100
     const total = subtotal + taxAmount
 
-    const docRef = await addDoc(collection(db, "invoices"), {
+    const docRef = await addDoc(collection(getFirebaseDb(), "invoices"), {
       ...data,
       userId,
       subtotal,
@@ -94,11 +95,11 @@ export function useInvoices(userId: string | null) {
       updates.total = subtotal + taxAmount
     }
 
-    await updateDoc(doc(db, "invoices", id), updates)
+    await updateDoc(doc(getFirebaseDb(), "invoices", id), updates)
   }
 
   const deleteInvoice = async (id: string): Promise<void> => {
-    await deleteDoc(doc(db, "invoices", id))
+    await deleteDoc(doc(getFirebaseDb(), "invoices", id))
   }
 
   return { invoices, loading, error, createInvoice, updateInvoice, deleteInvoice }

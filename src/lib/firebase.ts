@@ -1,6 +1,6 @@
-import { initializeApp, getApps, type FirebaseApp } from "firebase/app"
-import { getAuth, GithubAuthProvider, type Auth } from "firebase/auth"
-import { getFirestore, type Firestore } from "firebase/firestore"
+import { initializeApp, getApps, getApp as _getApp, type FirebaseApp } from "firebase/app"
+import { getAuth as _getAuth, GithubAuthProvider } from "firebase/auth"
+import { getFirestore as _getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,20 +11,23 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// eslint-disable-next-line prefer-const
-export let auth: Auth = null!
-// eslint-disable-next-line prefer-const
-export let db: Firestore = null!
-// eslint-disable-next-line prefer-const
-export let githubProvider: GithubAuthProvider = null!
+let _app: FirebaseApp | undefined
 
-let _app: FirebaseApp | null = null
-
-if (typeof window !== "undefined") {
-  _app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-  auth = getAuth(_app)
-  db = getFirestore(_app)
-  githubProvider = new GithubAuthProvider()
+function ensureApp(): FirebaseApp {
+  if (!_app) {
+    _app = getApps().length === 0 ? initializeApp(firebaseConfig) : _getApp()
+  }
+  return _app
 }
 
-export { _app as app }
+export const githubProvider = new GithubAuthProvider()
+
+/** Returns the Firebase Auth instance, initializing Firebase on first call. */
+export function getFirebaseAuth() {
+  return _getAuth(ensureApp())
+}
+
+/** Returns the Firestore instance, initializing Firebase on first call. */
+export function getFirebaseDb() {
+  return _getFirestore(ensureApp())
+}

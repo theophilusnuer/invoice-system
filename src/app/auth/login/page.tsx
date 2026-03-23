@@ -1,6 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -8,6 +7,8 @@ import { Github, FileText, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/lib/hooks/useAuth"
+
+export const dynamic = "force-dynamic"
 
 export default function LoginPage() {
   const { user, loading, error, signInWithGitHub } = useAuth()

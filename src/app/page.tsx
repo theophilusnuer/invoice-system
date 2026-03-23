@@ -1,6 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
 
 import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
@@ -10,6 +9,8 @@ import { InvoiceForm, type InvoiceFormValues } from "@/components/invoice-form"
 import { InvoicePreview } from "@/components/invoice-preview"
 import { useAuth } from "@/lib/hooks/useAuth"
 import { useInvoices } from "@/lib/hooks/useInvoices"
+
+export const dynamic = "force-dynamic"
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()

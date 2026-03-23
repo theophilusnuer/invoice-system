@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
   type User,
 } from "firebase/auth"
-import { auth, githubProvider } from "@/lib/firebase"
+import { getFirebaseAuth, githubProvider } from "@/lib/firebase"
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -15,6 +15,7 @@ export function useAuth() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    const auth = getFirebaseAuth()
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
@@ -25,7 +26,7 @@ export function useAuth() {
   const signInWithGitHub = async () => {
     try {
       setError(null)
-      await signInWithPopup(auth, githubProvider)
+      await signInWithPopup(getFirebaseAuth(), githubProvider)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed")
     }
@@ -33,7 +34,7 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
-      await firebaseSignOut(auth)
+      await firebaseSignOut(getFirebaseAuth())
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign out failed")
     }
