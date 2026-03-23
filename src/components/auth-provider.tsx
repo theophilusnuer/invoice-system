@@ -23,7 +23,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Set session cookie for middleware (basic approach)
       if (firebaseUser) {
         const token = await firebaseUser.getIdToken()
-        const secure = window.location.protocol === "https:" ? "; Secure" : ""
+        const isProduction = process.env.NODE_ENV === "production"
+        const secure = isProduction ? "; Secure" : ""
         document.cookie = `__session=${token}; path=/; max-age=3600; SameSite=Lax${secure}`
       } else {
         document.cookie = "__session=; path=/; max-age=0"

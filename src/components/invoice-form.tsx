@@ -53,7 +53,8 @@ function generateId() {
 
 function generateInvoiceNumber() {
   const date = new Date()
-  return `INV-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}-${String(Math.floor(Math.random() * 1000)).padStart(3, "0")}`
+  const ms = String(date.getMilliseconds()).padStart(3, "0")
+  return `INV-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}-${ms}`
 }
 
 export function InvoiceForm({

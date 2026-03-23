@@ -17,6 +17,13 @@ import {
 import { getFirebaseDb } from "@/lib/firebase"
 import type { Invoice, InvoiceFormData } from "@/lib/types"
 
+function computeTotals(lineItems: { amount: number }[], taxRate: number) {
+  const subtotal = lineItems.reduce((sum, item) => sum + item.amount, 0)
+  const taxAmount = (subtotal * taxRate) / 100
+  const total = subtotal + taxAmount
+  return { subtotal, taxAmount, total }
+}
+
 function serializeInvoice(data: Record<string, unknown>, id: string): Invoice {
   const createdAt = data.createdAt instanceof Timestamp
     ? data.createdAt.toDate().toISOString()
@@ -66,9 +73,7 @@ export function useInvoices(userId: string | null) {
 
   const createInvoice = async (data: InvoiceFormData): Promise<string> => {
     if (!userId) throw new Error("Not authenticated")
-    const subtotal = data.lineItems.reduce((sum, item) => sum + item.amount, 0)
-    const taxAmount = (subtotal * data.taxRate) / 100
-    const total = subtotal + taxAmount
+    const { subtotal, taxAmount, total } = computeTotals(data.lineItems, data.taxRate)
 
     const docRef = await addDoc(collection(getFirebaseDb(), "invoices"), {
       ...data,
@@ -83,16 +88,12 @@ export function useInvoices(userId: string | null) {
   }
 
   const updateInvoice = async (id: string, data: Partial<InvoiceFormData>): Promise<void> => {
-    const subtotal = data.lineItems
-      ? data.lineItems.reduce((sum, item) => sum + item.amount, 0)
-      : undefined
-
     const updates: Record<string, unknown> = { ...data, updatedAt: serverTimestamp() }
-    if (subtotal !== undefined && data.taxRate !== undefined) {
-      const taxAmount = (subtotal * data.taxRate) / 100
-      updates.subtotal = subtotal
-      updates.taxAmount = taxAmount
-      updates.total = subtotal + taxAmount
+    if (data.lineItems && data.taxRate !== undefined) {
+      const totals = computeTotals(data.lineItems, data.taxRate)
+      updates.subtotal = totals.subtotal
+      updates.taxAmount = totals.taxAmount
+      updates.total = totals.total
     }
 
     await updateDoc(doc(getFirebaseDb(), "invoices", id), updates)
